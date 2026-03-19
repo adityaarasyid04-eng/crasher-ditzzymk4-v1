@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crasher DitzzyMK4 [ V1 ]</title>
+<title>Crasher DitzzyMK4 V2</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -11,36 +11,54 @@
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: radial-gradient(circle at top left, #1a001f, #0d0d0d 60%),
-              linear-gradient(135deg, #14001a, #000000);
-  background-attachment: fixed;
+  background: #0d0d0d;
   color: white;
   display: flex;
-  flex-direction: column;
   height: 100vh;
+  overflow: hidden;
 }
 
-/* Boot screen FIXED */
-#boot {
-  position: fixed;
-  inset: 0;
-  background: black;
+/* SIDEBAR */
+.sidebar {
+  width: 240px;
+  background: #14001a;
+  border-right: 2px solid #7b00ff;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Orbitron', sans-serif;
+  flex-direction: column;
+  padding: 15px;
+}
+
+.sidebar h2 {
+  font-family: 'Orbitron';
   font-size: 16px;
+  margin-bottom: 20px;
   color: #b366ff;
-  z-index: 999;
+}
+
+.sidebar button {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(45deg,#7b00ff,#ff0055);
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* MAIN CHAT */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 header {
-  text-align: center;
   padding: 15px;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 18px;
-  background: rgba(20, 0, 26, 0.9);
+  background: #1a001f;
   border-bottom: 2px solid #7b00ff;
+  font-family: 'Orbitron';
+  font-size: 16px;
 }
 
 .chatbox {
@@ -59,23 +77,21 @@ header {
   word-wrap: break-word;
 }
 
-/* USER kanan */
 .user {
   align-self: flex-end;
-  background: linear-gradient(45deg, #7b00ff, #ff0055);
+  background: linear-gradient(45deg,#7b00ff,#ff0055);
 }
 
-/* AI kiri */
 .bot {
   align-self: flex-start;
-  background: rgba(40, 0, 50, 0.85);
+  background: #1e0028;
   border: 1px solid #7b00ff;
 }
 
 .input-area {
   display: flex;
   padding: 10px;
-  background: rgba(20, 0, 26, 0.95);
+  background: #14001a;
 }
 
 input {
@@ -84,65 +100,118 @@ input {
   border-radius: 8px;
   border: none;
   outline: none;
-  font-size: 14px;
 }
 
-button {
+button.send {
   margin-left: 10px;
-  padding: 12px 15px;
+  padding: 12px;
   border: none;
-  background: linear-gradient(45deg, #7b00ff, #ff0055);
-  color: white;
   border-radius: 8px;
+  background: linear-gradient(45deg,#7b00ff,#ff0055);
+  color: white;
   cursor: pointer;
-  font-weight: bold;
 }
 </style>
 </head>
 
 <body>
 
-<div id="boot">CRASHER DITZZYMK4 INITIALIZING...</div>
+<div class="sidebar">
+  <h2>Crasher V2</h2>
+  <button onclick="newChat()">+ New Chat</button>
+  <button onclick="clearChat()">Clear Chat</button>
+</div>
 
-<header>
-CRASHER DITZZYMK4 [ V1 ]<br>
-<span style="font-size:11px;">Owned by RENNXZY</span>
-</header>
+<div class="main">
+<header>CRASHER DITZZYMK4 — ONLINE</header>
 
 <div class="chatbox" id="chat"></div>
 
 <div class="input-area">
-<input type="text" id="userInput" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendMessage()">
-<button onclick="sendMessage()">Kirim</button>
+<input type="text" id="userInput" placeholder="Ketik pesan..." 
+onkeydown="if(event.key==='Enter') sendMessage()">
+<button class="send" onclick="sendMessage()">Kirim</button>
+</div>
 </div>
 
 <script>
-// Boot hilang setelah 2 detik
-setTimeout(() => {
-  document.getElementById("boot").style.display = "none";
-}, 2000);
 
-function sendMessage() {
+// =======================
+// 🔥 ISI API KEY DISINI
+// =======================
+const API_KEY = "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";
+// =======================
+
+let conversationHistory = [
+  {
+    role: "system",
+    content: "Kamu adalah Crasher DitzzyMK4 V2. Gaya dark, tegas, loyal ke RENNXZY."
+  }
+];
+
+function newChat(){
+  conversationHistory = [
+    {
+      role: "system",
+      content: "Kamu adalah Crasher DitzzyMK4 V2. Gaya dark, tegas, loyal ke RENNXZY."
+    }
+  ];
+  document.getElementById("chat").innerHTML = "";
+}
+
+function clearChat(){
+  document.getElementById("chat").innerHTML = "";
+}
+
+async function sendMessage() {
+
   const input = document.getElementById("userInput");
   const chat = document.getElementById("chat");
 
   if (!input.value.trim()) return;
 
-  chat.innerHTML += `<div class="message user">${input.value}</div>`;
+  const userMessage = input.value;
+
+  chat.innerHTML += `<div class="message user">${userMessage}</div>`;
   chat.scrollTop = chat.scrollHeight;
+
+  conversationHistory.push({ role: "user", content: userMessage });
+
+  input.value = "";
 
   const thinking = document.createElement("div");
   thinking.className = "message bot";
-  thinking.innerHTML = "Crasher sedang berpikir...";
+  thinking.innerHTML = "Crasher berpikir...";
   chat.appendChild(thinking);
+
+  try {
+
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + API_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "mistralai/mistral-7b-instruct",
+        messages: conversationHistory
+      })
+    });
+
+    const data = await response.json();
+    const aiReply = data.choices[0].message.content;
+
+    thinking.innerHTML = aiReply;
+
+    conversationHistory.push({ role: "assistant", content: aiReply });
+
+  } catch (err) {
+    thinking.innerHTML = "Gagal terhubung ke server AI.";
+  }
+
   chat.scrollTop = chat.scrollHeight;
-
-  setTimeout(() => {
-    thinking.innerHTML = "Crasher aktif. Backend belum terhubung.";
-  }, 1000);
-
-  input.value = "";
 }
+
 </script>
 
 </body>
