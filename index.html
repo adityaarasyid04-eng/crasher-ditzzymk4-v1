@@ -11,11 +11,34 @@
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  background: #0d0d0d;
+  background: radial-gradient(circle at top left, #1a001f, #0d0d0d 60%),
+              linear-gradient(135deg, #14001a, #000000);
+  background-attachment: fixed;
   color: white;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  overflow: hidden;
+}
+
+/* BOOT SCREEN */
+#boot {
+  position: fixed;
+  inset: 0;
+  background: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: #b366ff;
+  z-index: 999;
+  animation: fadeOut 2.5s forwards 2s;
+}
+
+@keyframes fadeOut {
+  to { opacity: 0; visibility: hidden; }
 }
 
 header {
@@ -23,8 +46,9 @@ header {
   padding: 15px;
   font-family: 'Orbitron', sans-serif;
   font-size: 18px;
-  background: #14001a;
+  background: rgba(20, 0, 26, 0.9);
   border-bottom: 2px solid #7b00ff;
+  box-shadow: 0 0 15px #7b00ff55;
 }
 
 .chatbox {
@@ -39,26 +63,37 @@ header {
   max-width: 75%;
   padding: 10px 15px;
   margin: 6px 0;
-  border-radius: 12px;
+  border-radius: 14px;
   word-wrap: break-word;
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.3s ease;
 }
 
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* USER DI KANAN */
 .user {
-  align-self: flex-start;
-  background: #1f1f1f;
-  border: 1px solid #7b00ff;
+  align-self: flex-end;
+  background: linear-gradient(45deg, #7b00ff, #ff0055);
+  box-shadow: 0 0 10px #ff00ff55;
 }
 
+/* AI DI KIRI */
 .bot {
-  align-self: flex-end;
-  background: #2b0033;
-  border: 1px solid #ff0055;
+  align-self: flex-start;
+  background: rgba(40, 0, 50, 0.85);
+  border: 1px solid #7b00ff;
+  box-shadow: 0 0 8px #7b00ff55;
 }
 
 .input-area {
   display: flex;
   padding: 10px;
-  background: #14001a;
+  background: rgba(20, 0, 26, 0.9);
+  border-top: 1px solid #7b00ff44;
 }
 
 input {
@@ -79,22 +114,24 @@ button {
   border-radius: 8px;
   cursor: pointer;
   font-weight: bold;
+  box-shadow: 0 0 10px #7b00ff88;
 }
 </style>
 </head>
 
 <body>
 
+<div id="boot">CRASHER DITZZYMK4 INITIALIZING...</div>
+
 <header>
-CRASHER DITZZYMK4 [ V1 ]  
-<br>
+CRASHER DITZZYMK4 [ V1 ]<br>
 <span style="font-size:11px;">Owned by RENNXZY</span>
 </header>
 
 <div class="chatbox" id="chat"></div>
 
 <div class="input-area">
-<input type="text" id="userInput" placeholder="Ketik pesan...">
+<input type="text" id="userInput" placeholder="Ketik pesan..." onkeydown="if(event.key==='Enter') sendMessage()">
 <button onclick="sendMessage()">Kirim</button>
 </div>
 
@@ -105,19 +142,38 @@ function sendMessage() {
 
   if (!input.value.trim()) return;
 
-  // Pesan User (kiri)
   chat.innerHTML += `<div class="message user">${input.value}</div>`;
+  chat.scrollTop = chat.scrollHeight;
 
-  // Dummy reply dulu (biar keliatan hidup)
+  const thinking = document.createElement("div");
+  thinking.className = "message bot";
+  thinking.innerHTML = "Crasher sedang berpikir...";
+  chat.appendChild(thinking);
+  chat.scrollTop = chat.scrollHeight;
+
   setTimeout(() => {
-    chat.innerHTML += `<div class="message bot">Crasher aktif. AI backend belum terhubung.</div>`;
-    chat.scrollTop = chat.scrollHeight;
-  }, 500);
+    thinking.remove();
+    typeEffect("Crasher aktif. Backend AI belum terhubung.", chat);
+  }, 1200);
 
   input.value = "";
-  chat.scrollTop = chat.scrollHeight;
+}
+
+function typeEffect(text, container) {
+  const div = document.createElement("div");
+  div.className = "message bot";
+  container.appendChild(div);
+
+  let i = 0;
+  const interval = setInterval(() => {
+    div.innerHTML += text.charAt(i);
+    i++;
+    if (i >= text.length) clearInterval(interval);
+    container.scrollTop = container.scrollHeight;
+  }, 25);
 }
 </script>
 
 </body>
 </html>
+
