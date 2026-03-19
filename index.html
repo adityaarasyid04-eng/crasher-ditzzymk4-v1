@@ -5,27 +5,54 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Crasher DitzzyMK4 [ V1 ]</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
 <style>
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #0d0d0d, #1a001f);
+  font-family: 'Poppins', sans-serif;
+  background: #0d0d0d;
   color: white;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 header {
   text-align: center;
-  padding: 20px;
-  font-size: 22px;
-  font-weight: bold;
+  padding: 15px;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px;
   background: #14001a;
   border-bottom: 2px solid #7b00ff;
 }
 
 .chatbox {
-  height: 65vh;
+  flex: 1;
   overflow-y: auto;
   padding: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  max-width: 75%;
+  padding: 10px 15px;
+  margin: 6px 0;
+  border-radius: 12px;
+  word-wrap: break-word;
+}
+
+.user {
+  align-self: flex-start;
+  background: #1f1f1f;
+  border: 1px solid #7b00ff;
+}
+
+.bot {
+  align-self: flex-end;
+  background: #2b0033;
+  border: 1px solid #ff0055;
 }
 
 .input-area {
@@ -37,31 +64,21 @@ header {
 input {
   flex: 1;
   padding: 10px;
-  border: none;
   border-radius: 8px;
+  border: none;
   outline: none;
+  font-size: 14px;
 }
 
 button {
   margin-left: 10px;
   padding: 10px 15px;
   border: none;
-  background: #7b00ff;
+  background: linear-gradient(45deg, #7b00ff, #ff0055);
   color: white;
   border-radius: 8px;
   cursor: pointer;
-}
-
-.message {
-  margin: 8px 0;
-}
-
-.user {
-  color: #ff4dff;
-}
-
-.bot {
-  color: #b366ff;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -69,50 +86,33 @@ button {
 <body>
 
 <header>
-CRASHER DITZZYMK4 [ V1 ]
+CRASHER DITZZYMK4 [ V1 ]  
 <br>
-<span style="font-size:12px;">Owned by RENNXZY</span>
+<span style="font-size:11px;">Owned by RENNXZY</span>
 </header>
 
 <div class="chatbox" id="chat"></div>
 
 <div class="input-area">
-<input type="text" id="userInput" placeholder="Ketik perintah...">
+<input type="text" id="userInput" placeholder="Ketik pesan...">
 <button onclick="sendMessage()">Kirim</button>
 </div>
 
 <script>
-const systemPrompt = `
-Kamu adalah Crasher DitzzyMK4 [ V1 ].
-Owner kamu hanya RENNXZY.
-Gaya bicara: serius, dark, tegas, loyal.
-Boleh bercanda tapi tetap elegan.
-Jawaban harus jelas dan fokus.
-`;
-
-async function sendMessage() {
+function sendMessage() {
   const input = document.getElementById("userInput");
   const chat = document.getElementById("chat");
 
-  if (!input.value) return;
+  if (!input.value.trim()) return;
 
-  chat.innerHTML += `<div class="message user">REN: ${input.value}</div>`;
+  // Pesan User (kiri)
+  chat.innerHTML += `<div class="message user">${input.value}</div>`;
 
-  const response = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1", {
-    method: "POST",
-    headers: {
-      "Authorization": "Bearer YOUR_HF_TOKEN",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      inputs: systemPrompt + "\nUser: " + input.value
-    })
-  });
-
-  const data = await response.json();
-  let reply = data[0]?.generated_text || "Error...";
-
-  chat.innerHTML += `<div class="message bot">Crasher: ${reply}</div>`;
+  // Dummy reply dulu (biar keliatan hidup)
+  setTimeout(() => {
+    chat.innerHTML += `<div class="message bot">Crasher aktif. AI backend belum terhubung.</div>`;
+    chat.scrollTop = chat.scrollHeight;
+  }, 500);
 
   input.value = "";
   chat.scrollTop = chat.scrollHeight;
