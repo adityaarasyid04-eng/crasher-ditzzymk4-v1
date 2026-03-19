@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Crasher DitzzyMK4 V3</title>
+<title>Crasher AI Debug</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
@@ -17,7 +17,6 @@ body{
   height:100vh;
 }
 
-/* SIDEBAR */
 .sidebar{
   width:260px;
   background:#14001a;
@@ -30,8 +29,8 @@ body{
 
 .sidebar h2{
   font-family:'Orbitron';
-  font-size:15px;
   color:#b366ff;
+  font-size:15px;
 }
 
 .new-btn{
@@ -61,7 +60,6 @@ body{
   background:#2c0038;
 }
 
-/* MAIN */
 .main{
   flex:1;
   display:flex;
@@ -102,6 +100,13 @@ header{
   border:1px solid #7b00ff;
 }
 
+.error{
+  align-self:flex-start;
+  background:#330000;
+  border:1px solid red;
+  color:#ffaaaa;
+}
+
 .input-area{
   display:flex;
   padding:10px;
@@ -114,7 +119,6 @@ input{
   border-radius:8px;
   border:none;
   outline:none;
-  font-size:14px;
 }
 
 button.send{
@@ -131,13 +135,13 @@ button.send{
 <body>
 
 <div class="sidebar">
-  <h2>Crasher V3</h2>
+  <h2>Crasher Debug</h2>
   <button class="new-btn" onclick="createNewChat()">+ New Chat</button>
   <div id="chatList"></div>
 </div>
 
 <div class="main">
-<header>CRASHER DITZZYMK4 — ONLINE</header>
+<header>CRASHER AI — DEBUG MODE</header>
 
 <div class="chatbox" id="chat"></div>
 
@@ -150,121 +154,118 @@ onkeydown="if(event.key==='Enter') sendMessage()">
 
 <script>
 
-// ==================
-// 🔥 ISI API KEY
-// ==================
+// =============================
+// 🔥 ISI API KEY LU DI SINI
+// =============================
 const API_KEY = "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";
-// ==================
+// =============================
 
-let chats = JSON.parse(localStorage.getItem("crasherChats")) || {};
+let chats = {};
 let currentChatId = null;
 
-function saveChats(){
-  localStorage.setItem("crasherChats", JSON.stringify(chats));
-}
-
 function createNewChat(){
-  const id = "chat_" + Date.now();
+  const id = "chat_"+Date.now();
   chats[id] = {
-    title: "Chat Baru",
-    messages: [
-      {role:"system", content:"Kamu adalah Crasher DitzzyMK4. Gaya dark, tegas."}
+    title:"Chat Baru",
+    messages:[
+      {role:"system",content:"Kamu adalah AI profesional, cerdas, dan stabil seperti ChatGPT."}
     ]
   };
-  currentChatId = id;
-  saveChats();
+  currentChatId=id;
   renderChatList();
   loadChat(id);
 }
 
 function renderChatList(){
-  const chatList = document.getElementById("chatList");
-  chatList.innerHTML = "";
-
+  const chatList=document.getElementById("chatList");
+  chatList.innerHTML="";
   Object.keys(chats).reverse().forEach(id=>{
-    const div = document.createElement("div");
-    div.className = "chat-item";
-    div.innerText = chats[id].title;
-    div.onclick = ()=> loadChat(id);
+    const div=document.createElement("div");
+    div.className="chat-item";
+    div.innerText=chats[id].title;
+    div.onclick=()=>loadChat(id);
     chatList.appendChild(div);
   });
 }
 
 function loadChat(id){
-  currentChatId = id;
-  const chatbox = document.getElementById("chat");
-  chatbox.innerHTML = "";
-
+  currentChatId=id;
+  const chatbox=document.getElementById("chat");
+  chatbox.innerHTML="";
   chats[id].messages.forEach(msg=>{
-    if(msg.role === "user"){
-      chatbox.innerHTML += `<div class="message user">${msg.content}</div>`;
+    if(msg.role==="user"){
+      chatbox.innerHTML+=`<div class="message user">${msg.content}</div>`;
     }
-    if(msg.role === "assistant"){
-      chatbox.innerHTML += `<div class="message bot">${msg.content}</div>`;
+    if(msg.role==="assistant"){
+      chatbox.innerHTML+=`<div class="message bot">${msg.content}</div>`;
     }
   });
-
-  chatbox.scrollTop = chatbox.scrollHeight;
 }
 
 async function sendMessage(){
   if(!currentChatId) createNewChat();
 
-  const input = document.getElementById("userInput");
-  const chatbox = document.getElementById("chat");
+  const input=document.getElementById("userInput");
+  const chatbox=document.getElementById("chat");
+
   if(!input.value.trim()) return;
 
-  const text = input.value;
+  const text=input.value;
 
-  chatbox.innerHTML += `<div class="message user">${text}</div>`;
+  chatbox.innerHTML+=`<div class="message user">${text}</div>`;
   chats[currentChatId].messages.push({role:"user",content:text});
 
-  if(chats[currentChatId].title === "Chat Baru"){
-    chats[currentChatId].title = text.substring(0,25);
+  if(chats[currentChatId].title==="Chat Baru"){
+    chats[currentChatId].title=text.substring(0,25);
   }
 
   input.value="";
-  chatbox.scrollTop = chatbox.scrollHeight;
 
-  const thinking = document.createElement("div");
+  const thinking=document.createElement("div");
   thinking.className="message bot";
-  thinking.innerHTML="Crasher berpikir...";
+  thinking.innerHTML="Thinking...";
   chatbox.appendChild(thinking);
 
   try{
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions",{
+
+    const response=await fetch("https://openrouter.ai/api/v1/chat/completions",{
       method:"POST",
       headers:{
         "Authorization":"Bearer "+API_KEY,
-        "Content-Type":"application/json"
+        "Content-Type":"application/json",
+        "HTTP-Referer":window.location.href,
+        "X-Title":"Crasher Debug"
       },
       body:JSON.stringify({
-        model:"mistralai/mistral-7b-instruct",
+        model:"openai/gpt-3.5-turbo",
         messages:chats[currentChatId].messages
       })
     });
 
-    const data = await response.json();
-    const reply = data.choices[0].message.content;
+    const data=await response.json();
 
-    thinking.innerHTML = reply;
+    if(!response.ok){
+      thinking.className="message error";
+      thinking.innerHTML=
+        "STATUS: "+response.status+
+        "<br>ERROR:<br>"+JSON.stringify(data,null,2);
+      console.log(data);
+      return;
+    }
+
+    const reply=data.choices[0].message.content;
+    thinking.innerHTML=reply;
     chats[currentChatId].messages.push({role:"assistant",content:reply});
 
   }catch(err){
-    thinking.innerHTML="Server error.";
+    thinking.className="message error";
+    thinking.innerHTML="FETCH ERROR:<br>"+err.message;
   }
 
-  saveChats();
   renderChatList();
-  chatbox.scrollTop = chatbox.scrollHeight;
-}
-
-renderChatList();
-if(Object.keys(chats).length>0){
-  loadChat(Object.keys(chats)[0]);
+  chatbox.scrollTop=chatbox.scrollHeight;
 }
 
 </script>
-
 </body>
 </html>
