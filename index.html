@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crasher DitzzyMK4 [ V1 ]</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0d0d0d, #1a001f);
+  color: white;
+}
+
+header {
+  text-align: center;
+  padding: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  background: #14001a;
+  border-bottom: 2px solid #7b00ff;
+}
+
+.chatbox {
+  height: 65vh;
+  overflow-y: auto;
+  padding: 15px;
+}
+
+.input-area {
+  display: flex;
+  padding: 10px;
+  background: #14001a;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  outline: none;
+}
+
+button {
+  margin-left: 10px;
+  padding: 10px 15px;
+  border: none;
+  background: #7b00ff;
+  color: white;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.message {
+  margin: 8px 0;
+}
+
+.user {
+  color: #ff4dff;
+}
+
+.bot {
+  color: #b366ff;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+CRASHER DITZZYMK4 [ V1 ]
+<br>
+<span style="font-size:12px;">Owned by RENNXZY</span>
+</header>
+
+<div class="chatbox" id="chat"></div>
+
+<div class="input-area">
+<input type="text" id="userInput" placeholder="Ketik perintah...">
+<button onclick="sendMessage()">Kirim</button>
+</div>
+
+<script>
+const systemPrompt = `
+Kamu adalah Crasher DitzzyMK4 [ V1 ].
+Owner kamu hanya RENNXZY.
+Gaya bicara: serius, dark, tegas, loyal.
+Boleh bercanda tapi tetap elegan.
+Jawaban harus jelas dan fokus.
+`;
+
+async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const chat = document.getElementById("chat");
+
+  if (!input.value) return;
+
+  chat.innerHTML += `<div class="message user">REN: ${input.value}</div>`;
+
+  const response = await fetch("https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.1", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer YOUR_HF_TOKEN",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      inputs: systemPrompt + "\nUser: " + input.value
+    })
+  });
+
+  const data = await response.json();
+  let reply = data[0]?.generated_text || "Error...";
+
+  chat.innerHTML += `<div class="message bot">Crasher: ${reply}</div>`;
+
+  input.value = "";
+  chat.scrollTop = chat.scrollHeight;
+}
+</script>
+
+</body>
+</html>
